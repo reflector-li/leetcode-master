@@ -1,14 +1,7 @@
 
-<p align="center">
-  <a href="https://mp.weixin.qq.com/s/RsdcQ9umo09R6cfnwXZlrQ"><img src="https://img.shields.io/badge/PDF下载-代码随想录-blueviolet" alt=""></a>
-  <a href="https://mp.weixin.qq.com/s/b66DFkOp8OOxdZC_xLZxfw"><img src="https://img.shields.io/badge/刷题-微信群-green" alt=""></a>
-  <a href="https://space.bilibili.com/525438321"><img src="https://img.shields.io/badge/B站-代码随想录-orange" alt=""></a>
-  <a href="https://mp.weixin.qq.com/s/QVF6upVMSbgvZy8lHZS3CQ"><img src="https://img.shields.io/badge/知识星球-代码随想录-blue" alt=""></a>
-</p>
-<p align="center"><strong>欢迎大家<a href="https://mp.weixin.qq.com/s/tqCxrMEU-ajQumL1i8im9A">参与本项目</a>，贡献其他语言版本的代码，拥抱开源，让更多学习算法的小伙伴们收益！</strong></p>
-
-
 # 力扣上如何自己构造二叉树输入用例？
+
+**这里给大家推荐ACM模式练习网站**：[kamacoder.com](https://kamacoder.com)，把上面的题目刷完，ACM模式就没问题了。
 
 经常有录友问，二叉树的题目中输入用例在ACM模式下应该怎么构造呢？
 
@@ -24,7 +17,7 @@
 
 ![](https://code-thinking-1253855093.file.myqcloud.com/pics/20210914222335.png)
 
-一直跟着公众号学算法的录友 应该知道，我在[二叉树：构造二叉树登场！](https://mp.weixin.qq.com/s/Dza-fqjTyGrsRw4PWNKdxA)，已经讲过，**只有 中序与后序 和  中序和前序 可以确定一颗唯一的二叉树。 前序和后序是不能确定唯一的二叉树的**。
+一直跟着公众号学算法的录友 应该知道，我在[二叉树：构造二叉树登场！](https://mp.weixin.qq.com/s/Dza-fqjTyGrsRw4PWNKdxA)，已经讲过，**只有 中序与后序 和  中序和前序 可以确定一棵唯一的二叉树。 前序和后序是不能确定唯一的二叉树的**。
 
 那么[538.把二叉搜索树转换为累加树](https://mp.weixin.qq.com/s/rlJUFGCnXsIMX0Lg-fRpIw)的示例中，为什么，一个序列（数组或者是字符串）就可以确定二叉树了呢？
 
@@ -66,11 +59,18 @@ TreeNode* construct_binary_tree(const vector<int>& vec) {
         if (i == 0) root = node;
     }
     // 遍历一遍，根据规则左右孩子赋值就可以了
-    // 注意这里 结束规则是 i * 2 + 2 < vec.size()，避免空指针
-    for (int i = 0; i * 2 + 2 < vec.size(); i++) {
+    // 注意这里 结束规则是 i * 2 + 1 < vec.size()，避免空指针
+    // 为什么结束规则不能是i * 2 + 2 < arr.length呢?
+    // 如果i * 2 + 2 < arr.length 是结束条件
+    // 那么i * 2 + 1这个符合条件的节点就被忽略掉了
+    // 例如[2,7,9,-1,1,9,6,-1,-1,10] 这样的一个二叉树,最后的10就会被忽略掉
+    // 遍历一遍，根据规则左右孩子赋值就可以了
+           
+    for (int i = 0; i * 2 + 1 < vec.size(); i++) {
         if (vecTree[i] != NULL) {
             // 线性存储转连式存储关键逻辑
             vecTree[i]->left = vecTree[i * 2 + 1];
+            if(i * 2 + 2 < vec.size())
             vecTree[i]->right = vecTree[i * 2 + 2];
         }
     }
@@ -123,9 +123,10 @@ TreeNode* construct_binary_tree(const vector<int>& vec) {
         vecTree[i] = node;
         if (i == 0) root = node;
     }
-    for (int i = 0; i * 2 + 2 < vec.size(); i++) {
+    for (int i = 0; i * 2 + 1 < vec.size(); i++) {
         if (vecTree[i] != NULL) {
             vecTree[i]->left = vecTree[i * 2 + 1];
+            if(i * 2 + 2 < vec.size())
             vecTree[i]->right = vecTree[i * 2 + 2];
         }
     }
@@ -217,18 +218,199 @@ int main() {
 ## Java 
 
 ```Java
+public class Solution {
+    // 节点类
+    static class TreeNode {
+        // 节点值
+        int val;
+        
+        // 左节点
+        TreeNode left;
+
+        // 右节点
+        TreeNode right;
+
+        // 节点的构造函数(默认左右节点都为null)
+        public TreeNode(int x) {
+            this.val = x;
+            this.left = null;
+            this.right = null;
+        }
+    }
+    
+    /**
+     * 根据数组构建二叉树
+     * @param arr 树的数组表示
+     * @return 构建成功后树的根节点
+     */
+    public TreeNode constructBinaryTree(final int[] arr) {
+        // 构建和原数组相同的树节点列表
+        List<TreeNode> treeNodeList = arr.length > 0 ? new ArrayList<>(arr.length) : null;
+        TreeNode root = null;
+        // 把输入数值数组，先转化为二叉树节点列表
+        for (int i = 0; i < arr.length; i++) {
+            TreeNode node = null;
+            if (arr[i] != -1) { // 用 -1 表示null
+                node = new TreeNode(arr[i]);
+            }
+            treeNodeList.add(node);
+            if (i == 0) {
+                root = node;
+            }
+        }
+        // 遍历一遍，根据规则左右孩子赋值就可以了
+        // 注意这里 结束规则是 i * 2 + 1 < arr.length，避免空指针
+        // 为什么结束规则不能是i * 2 + 2 < arr.length呢?
+        // 如果i * 2 + 2 < arr.length 是结束条件
+        // 那么i * 2 + 1这个符合条件的节点就被忽略掉了
+        // 例如[2,7,9,-1,1,9,6,-1,-1,10] 这样的一个二叉树,最后的10就会被忽略掉
+        for (int i = 0; i * 2 + 1 < arr.length; i++) {
+            TreeNode node = treeNodeList.get(i);
+            if (node != null) {
+                // 线性存储转连式存储关键逻辑
+                node.left = treeNodeList.get(2 * i + 1);
+                //  再次判断下 不忽略任何一个节点
+                if(i * 2 + 2 < arr.length)
+                node.right = treeNodeList.get(2 * i + 2);
+            }
+        }
+        return root;
+    }
+}
 ```
 
 
 ## Python 
 
 ```Python
+class TreeNode:
+    def __init__(self, val = 0, left = None, right = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+# 根据数组构建二叉树
+
+def construct_binary_tree(nums: []) -> TreeNode:
+    if not nums: 
+        return None
+    # 用于存放构建好的节点
+    root = TreeNode(-1)
+    Tree = []
+    # 将数组元素全部转化为树节点
+    for i in range(len(nums)):
+        if nums[i]!= -1:
+            node = TreeNode(nums[i])
+        else:
+            node = None
+        Tree.append(node)
+        if i == 0:
+            root = node
+    # 直接判断2*i+2<len(Tree)会漏掉2*i+1=len(Tree)-1的情况
+    for i in range(len(Tree)):
+        if Tree[i] and 2 * i + 1 < len(Tree):
+            Tree[i].left = Tree[2 * i + 1]
+            if 2 * i + 2 < len(Tree):
+                Tree[i].right = Tree[2 * i + 2]
+    return root
+
+
+
+# 算法:中序遍历二叉树
+
+class Solution:
+    def __init__(self):
+        self.T = []
+    def inorder(self, root: TreeNode) -> []:
+        if not root:
+            return 
+        self.inorder(root.left)
+        self.T.append(root.val)
+        self.inorder(root.right)
+        return self.T
+
+
+
+# 验证创建二叉树的有效性,二叉排序树的中序遍历应为顺序排列
+
+test_tree = [3, 1, 5, -1, 2, 4 ,6]
+root = construct_binary_tree(test_tree)
+A = Solution()
+print(A.inorder(root))
 ```
 
 
 ## Go 
 
 ```Go
+package main
+
+import "fmt"
+
+type TreeNode struct {
+    Val   int
+    Left  *TreeNode
+    Right *TreeNode
+}
+
+func constructBinaryTree(array []int) *TreeNode {
+    var root *TreeNode
+    nodes := make([]*TreeNode, len(array))
+
+    // 初始化二叉树节点
+    for i := 0; i < len(nodes); i++ {
+	var node *TreeNode
+	if array[i] != -1 {
+	    node = &TreeNode{Val: array[i]}
+	}
+	nodes[i] = node
+	if i == 0 {
+	    root = node
+	}
+    }
+    // 串联节点
+    for i := 0; i*2+2 < len(array); i++ {
+        if nodes[i] != nil {
+	    nodes[i].Left = nodes[i*2+1]
+	    nodes[i].Right = nodes[i*2+2]
+	}
+    }
+    return root
+}
+
+func printBinaryTree(root *TreeNode, n int) {
+    var queue []*TreeNode
+    if root != nil {
+	queue = append(queue, root)
+    }
+
+    result := []int{}
+    for len(queue) > 0 {
+	for j := 0; j < len(queue); j++ {
+	    node := queue[j]
+	    if node != nil {
+		result = append(result, node.Val)
+		queue = append(queue, node.Left)
+		queue = append(queue, node.Right)
+	    } else {
+	        result = append(result, -1)
+	    }
+        }
+	// 清除队列中的本层节点, 进入下一层遍历
+	queue = queue[len(queue):]
+    }
+    
+    // 参数n控制输出值数量, 否则二叉树最后一层叶子节点的孩子节点也会被打印(但是这些孩子节点是不存在的).
+    fmt.Println(result[:n])
+}
+
+func main() {
+    array := []int{4, 1, 6, 0, 2, 5, 7, -1, -1, -1, 3, -1, -1, -1, 8}
+    root := constructBinaryTree(array)
+    printBinaryTree(root, len(array))
+}
+
 ```
 
 ## JavaScript
@@ -237,7 +419,4 @@ int main() {
 ```
 
 -----------------------
-* 作者微信：[程序员Carl](https://mp.weixin.qq.com/s/b66DFkOp8OOxdZC_xLZxfw)
-* B站视频：[代码随想录](https://space.bilibili.com/525438321)
-* 知识星球：[代码随想录](https://mp.weixin.qq.com/s/QVF6upVMSbgvZy8lHZS3CQ)
 <div align="center"><img src=https://code-thinking.cdn.bcebos.com/pics/01二维码.jpg width=450> </img></div>

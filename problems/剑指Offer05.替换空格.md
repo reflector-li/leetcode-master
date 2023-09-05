@@ -1,12 +1,13 @@
 <p align="center">
-<a href="https://www.aliyun.com/minisite/goods?taskPkg=1111ydsrwb&pkgSid=1959&recordId=962642&userCode=roof0wob" target="_blank">
-    <img src="https://code-thinking.cdn.bcebos.com/pics/20211111014019.png" width="1000"/>
+<a href="https://programmercarl.com/other/xunlianying.html" target="_blank">
+  <img src="../pics/训练营.png" width="1000"/>
 </a>
+<p align="center"><strong><a href="https://mp.weixin.qq.com/s/tqCxrMEU-ajQumL1i8im9A">参与本项目</a>，贡献其他语言版本的代码，拥抱开源，让更多学习算法的小伙伴们收益！</strong></p>
 
 
 # 题目：剑指Offer 05.替换空格
 
-[力扣题目链接](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
+[力扣题目链接](https://leetcode.cn/problems/ti-huan-kong-ge-lcof/)
 
 请实现一个函数，把字符串 s 中的每个空格替换成"%20"。
 
@@ -14,7 +15,7 @@
 输入：s = "We are happy."    
 输出："We%20are%20happy."     
 
-# 思路
+## 思路
 
 如果想把这道题目做到极致，就不要只用额外的辅助空间了！
 
@@ -24,7 +25,7 @@
 
 i指向新长度的末尾，j指向旧长度的末尾。
 
-![替换空格](https://tva1.sinaimg.cn/large/e6c9d24ely1go6qmevhgpg20du09m4qp.gif)
+![替换空格](https://code-thinking.cdn.bcebos.com/gifs/%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC.gif)
 
 有同学问了，为什么要从后向前填充，从前向后填充不行么？
 
@@ -35,7 +36,7 @@ i指向新长度的末尾，j指向旧长度的末尾。
 这么做有两个好处：
 
 1. 不用申请新数组。
-2. 从后向前填充元素，避免了从前先后填充元素要来的 每次添加元素都要将添加元素之后的所有元素向后移动。
+2. 从后向前填充元素，避免了从前向后填充元素时，每次添加元素都要将添加元素之后的所有元素向后移动的问题。
 
 时间复杂度，空间复杂度均超过100%的用户。
 
@@ -71,8 +72,8 @@ public:
         return s;
     }
 };
-
 ```
+
 * 时间复杂度：O(n)
 * 空间复杂度：O(1)
 
@@ -85,7 +86,7 @@ public:
 * [142.环形链表II](https://programmercarl.com/0142.环形链表II.html)
 * [344.反转字符串](https://programmercarl.com/0344.反转字符串.html)
 
-# 拓展
+## 拓展
 
 这里也给大家拓展一下字符串和数组有什么差别，
 
@@ -120,23 +121,56 @@ for (int i = 0; i < a.size(); i++) {
 
 ## 其他语言版本
 
+### C：
 
-Java：
+```C
+char* replaceSpace(char* s){
+    //统计空格数量
+    int count = 0;
+    int len = strlen(s);
+    for (int i = 0; i < len; i++) {
+        if (s[i] == ' ') {
+            count++;
+        }
+    }
+
+    //为新数组分配空间
+    int newLen = len + count * 2;
+    char* result = malloc(sizeof(char) * newLen + 1);
+    //填充新数组并替换空格
+    for (int i = len - 1, j = newLen - 1; i >= 0; i--, j--) {
+        if (s[i] != ' ') {
+            result[j] = s[i];
+        } else {
+            result[j--] = '0';
+            result[j--] = '2';
+            result[j] = '%';
+        }
+    }
+    result[newLen] = '\0';
+
+    return result;
+}
+```
+
+### Java：
+
 ```Java
 //使用一个新的对象，复制 str，复制的过程对其判断，是空格则替换，否则直接复制，类似于数组复制
-public static String replaceSpace(StringBuffer str) {
-        if (str == null) {
+public static String replaceSpace(String s) {
+        if (s == null) {
             return null;
         }
-		//选用 StringBuilder 单线程使用，比较快，选不选都行
+        //选用 StringBuilder 单线程使用，比较快，选不选都行
         StringBuilder sb = new StringBuilder();
-		//使用 sb 逐个复制 str ，碰到空格则替换，否则直接复制
-        for (int i = 0; i < str.length(); i++) {
-		//str.charAt(i) 为 char 类型，为了比较需要将其转为和 " " 相同的字符串类型
-            if (" ".equals(String.valueOf(str.charAt(i)))){
+        //使用 sb 逐个复制 s ，碰到空格则替换，否则直接复制
+        for (int i = 0; i < s.length(); i++) {
+            //s.charAt(i) 为 char 类型，为了比较需要将其转为和 " " 相同的字符串类型
+            //if (" ".equals(String.valueOf(s.charAt(i)))){}
+            if (s.charAt(i) == ' ') {
                 sb.append("%20");
             } else {
-                sb.append(str.charAt(i));
+                sb.append(s.charAt(i));
             }
         }
         return sb.toString();
@@ -178,8 +212,8 @@ public String replaceSpace(String s) {
 }
 ```
 
+### Go：
 
-Go：
 ```go
 // 遍历添加
 func replaceSpace(s string) string {
@@ -231,8 +265,11 @@ func replaceSpace(s string) string {
 
 
 
+### python：
 
-python：
+因为字符串是不可变类型，所以操作字符串需要将其转换为列表，因此空间复杂度不可能为O(1)
+
+（版本一）转换成列表，并且添加相匹配的空间，然后进行填充
 ```python
 class Solution:
     def replaceSpace(self, s: str) -> str:
@@ -257,9 +294,44 @@ class Solution:
         return ''.join(res)
             
 ```
+（版本二）添加空列表，添加匹配的结果
+```python
+class Solution:
+    def replaceSpace(self, s: str) -> str:
+        res = []
+        for i in range(len(s)):
+            if s[i] == ' ':
+                res.append('%20')
+            else:
+                res.append(s[i])
+        return ''.join(res)
+```
+（版本三）使用切片
+```python
+class Solution:
+    def replaceSpace(self, s: str) -> str:
+        n = len(s)
+        for e, i in enumerate(s[::-1]):
+            print(i, e)
+            if i == " ":
+                s = s[: n - (e + 1)] + "%20" + s[n - e:]
+            print("")
+        return s
+```
+（版本四）使用join + split
+```python
+class Solution:
+    def replaceSpace(self, s: str) -> str:
+        return "%20".join(s.split(" "))
+```
+（版本五）使用replace
+```python
+class Solution:
+    def replaceSpace(self, s: str) -> str:
+        return s.replace(' ', '%20')
+```
+### JavaScript:
 
-
-javaScript:
 ```js
 /**
  * @param {string} s
@@ -296,7 +368,34 @@ javaScript:
 };
 ```
 
-Swift:
+### TypeScript：
+
+```typescript
+function replaceSpace(s: string): string {
+    let arr: string[] = s.split('');
+    let spaceNum: number = 0;
+    let oldLength: number = arr.length;
+    for (let i = 0; i < oldLength; i++) {
+        if (arr[i] === ' ') {
+            spaceNum++;
+        }
+    }
+    arr.length = oldLength + 2 * spaceNum;
+    let cur: number = oldLength - 1;
+    for (let i = arr.length - 1; i >= 0; i--, cur--) {
+        if (arr[cur] !== ' ') {
+            arr[i] = arr[cur]
+        } else {
+            arr[i] = '0';
+            arr[--i] = '2';
+            arr[--i] = '%';
+        }
+    }
+    return arr.join('');
+};
+```
+
+### Swift:
 
 ```swift
 func replaceSpace(_ s: String) -> String {
@@ -337,12 +436,133 @@ func replaceSpace(_ s: String) -> String {
 }
 ```
 
+### Scala:
+
+方式一: 双指针
+```scala
+object Solution {
+  def replaceSpace(s: String): String = {
+    var count = 0
+    s.foreach(c => if (c == ' ') count += 1) // 统计空格的数量
+    val sOldSize = s.length // 旧数组字符串长度
+    val sNewSize = s.length + count * 2 // 新数组字符串长度
+    val res = new Array[Char](sNewSize) // 新数组
+    var index = sNewSize - 1 // 新数组索引
+    // 逆序遍历
+    for (i <- (0 until sOldSize).reverse) {
+      if (s(i) == ' ') {
+        res(index) = '0'
+        index -= 1
+        res(index) = '2'
+        index -= 1
+        res(index) = '%'
+      } else {
+        res(index) = s(i)
+      }
+      index -= 1
+    }
+    res.mkString
+  }
+}
+```
+方式二: 使用一个集合，遇到空格就添加%20
+```scala
+object Solution {
+  import scala.collection.mutable.ListBuffer
+  def replaceSpace(s: String): String = {
+    val res: ListBuffer[Char] = ListBuffer[Char]()
+    for (i <- s.indices) {
+      if (s(i) == ' ') {
+        res += '%'
+        res += '2'
+        res += '0'
+      }else{
+        res += s(i)
+      }
+    }
+    res.mkString
+  }
+}
+```
+方式三: 使用map
+```scala
+object Solution {
+  def replaceSpace(s: String): String = {
+    s.map(c => if(c == ' ') "%20" else c).mkString
+  }
+  }
+```
+
+### PHP：
+
+```php
+function replaceSpace($s){
+    $sLen = strlen($s);
+    $moreLen = $this->spaceLen($s) * 2;
+
+    $head = $sLen - 1;
+    $tail = $sLen + $moreLen - 1;
+
+    $s = $s . str_repeat(' ', $moreLen);
+    while ($head != $tail) {
+        if ($s[$head] == ' ') {
+            $s[$tail--] = '0';
+            $s[$tail--] = '2';
+            $s[$tail] = '%';
+        } else {
+            $s[$tail] = $s[$head];
+        }
+        $head--;
+        $tail--;
+    }
+    return $s;
+}
+// 统计空格个数
+function spaceLen($s){
+    $count = 0;
+    for ($i = 0; $i < strlen($s); $i++) {
+        if ($s[$i] == ' ') {
+            $count++;
+        }
+    }
+    return $count;
+}
+```
+
+### Rust:
+
+```Rust
+impl Solution {
+    pub fn replace_space(s: String) -> String {
+        let mut len: usize = s.len();
+        let mut s = s.chars().collect::<Vec<char>>();
+        let mut count = 0;
+        for i in &s {
+            if i.is_ascii_whitespace() {
+                count += 1;
+            }
+        }
+        let mut new_len = len + count * 2;
+        s.resize(new_len, ' ');
+        while len < new_len {
+            len -= 1;
+            new_len -= 1;
+            if s[len].is_ascii_whitespace() {
+                s[new_len] = '0';
+                s[new_len - 1] = '2';
+                s[new_len - 2] = '%';
+                new_len -= 2;
+            }
+            else { s[new_len] = s[len] }
+        }
+        s.iter().collect::<String>()
+    }
+}
+```
 
 
-
-
------------------------
 <p align="center">
-<a href="https://mp.weixin.qq.com/s/QVF6upVMSbgvZy8lHZS3CQ" target="_blank">
-  <img src="https://code-thinking-1253855093.file.myqcloud.com/pics/20210924105952.png" width="1000"/>
+<a href="https://programmercarl.com/other/kstar.html" target="_blank">
+  <img src="../pics/网站星球宣传海报.jpg" width="1000"/>
 </a>
+
